@@ -9,7 +9,7 @@ class Tournament:
 
         game = Game(players, board)
 
-        game.setup()
+        game.setup(0)
         endState = game.loop()
 
         print(endState)

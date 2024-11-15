@@ -1,11 +1,13 @@
 from CoreElements import Player, Board, Turn, BoardState
+import random
 
 class NineCoinsBoard(Board):
     def __init__(self):
         self.board = []
 
-    def init(self):
-        self.board = list(range(1,10))
+    def init(self, seed = 0):
+        random.seed(seed)
+        self.board = [int(random.random() * 10) for i in range(1,9)]
         print(self.board)
         self.nextPlayer = 0
         self.scores = [0, 0]

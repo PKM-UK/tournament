@@ -5,9 +5,9 @@ class NineCoinsBoard(Board):
     def __init__(self):
         self.board = []
 
-    def init(self, seed = 0):
+    def init(self, seed = 0, length = 8):
         random.seed(seed)
-        self.board = [int((random.random() * 10)) ** 2 for i in range(1,9)]
+        self.board = [int((random.random() * 10)) ** 2 for i in range(1,length + 1)]
         print(self.board)
         self.nextPlayer = 0
         self.scores = [0, 0]
@@ -80,15 +80,46 @@ class NineCoinsPlayer(Player):
         else:
             lValue = self.oneLookaheadValue(board, 'L')
             rValue = self.oneLookaheadValue(board, 'R')
-            return ('L', lValue) if lValue > rValue else ('R', rValue)        
+            return ('L', lValue) if lValue > rValue else ('R', rValue)
+
+    def minMax(self, board, depth):
+        print(f'Minmaxing {len(board)} coins to depth {depth}')
+        if len(board) == 1:
+            return ('L', board[0])
+        elif len(board) == 2:
+            print(board)
+            if board[0] > board[1]:
+                print('Pick left')
+                return ('L', board[0] - board[1])
+            else:
+                print('Pick right')
+                return ('R', board[1] - board[0])
+        elif depth == 0:
+            if board[0] > board[-1]:
+                return ('L', board[0])
+            else:
+                return ('R', board[-1])
+        else:
+            lUtility = board[0] - self.minMax(board[1:], depth-1)[1]
+            print(f'Going left on {board} gets us {lUtility}')
+            rUtility = board[-1] - self.minMax(board[:-1], depth-1)[1]
+            print(f'Going right on {board} gets us {rUtility}')
+            if lUtility > rUtility:
+                print('Go left')
+                return ('L', lUtility)
+            else:
+                print('Go right')
+                return ('R', rUtility)
              
     def takeTurn(self, state):
         # Algorithm here! Factor out later
         action = ''
         if self.algorithm == 0:
             action = self.greedyPick(state.board)[0]
-        else:
+        elif self.algorithm == 1:
             action = self.oneLookAheadPick(state.board)[0]
+        else:
+            action = self.minMax(state.board, 10)[0]
 
         turn = NineCoinsTurn(action)
         return turn
@@ -106,3 +137,14 @@ class NineCoinsState(BoardState):
 
     def __str__(self):
         return f'Board is {self.board}. Scores {self.scores[0]} - {self.scores[1]}'
+
+def testHarness():
+    testPlayer = NineCoinsPlayer(2)
+    testBoard = NineCoinsBoard()
+    testBoard.init(1, 4)
+    turn = testPlayer.takeTurn(testBoard.getState())
+
+    print(turn.actions)
+
+if __name__ == "__main__":
+    testHarness()

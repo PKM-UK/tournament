@@ -7,7 +7,7 @@ class NineCoinsBoard(Board):
 
     def init(self, seed = 0):
         random.seed(seed)
-        self.board = [int(random.random() * 10) for i in range(1,9)]
+        self.board = [int((random.random() * 10)) ** 2 for i in range(1,9)]
         print(self.board)
         self.nextPlayer = 0
         self.scores = [0, 0]

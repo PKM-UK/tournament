@@ -3,8 +3,8 @@ class Game:
         self.board = board
         self.players = players
 
-    def setup(self, seed = 0):
-        self.board.init(seed)
+    def setup(self, seed = 0, length = 8):
+        self.board.init(seed, length)
 
     def loop(self):
         gameState = self.board.getState()
